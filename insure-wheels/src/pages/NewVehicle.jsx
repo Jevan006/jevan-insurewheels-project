@@ -3,50 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import VehicleForm from '../components/VehicleForm';
 import { Container, Paper, Typography } from '@mui/material';
 
-function NewVehicle() {
-  const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+// ... (imports) ...
 
-  const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles'; // Same URL as in Dashboard.jsx
-
-  const initialValues = {
-    make: '',
-    model: '',
-    year: '',
-    vin: '',
-    color: '',
-    mileage: '',
-  };
+function NewVehicle({ showSnackbar }) { // Accept showSnackbar as prop
+  // ... (existing state and API_URL) ...
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values), // Send form values as JSON
-      });
-
+      // ... (existing fetch logic) ...
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        // ... (existing error handling) ...
       }
 
-      // Vehicle added successfully
-      resetForm(); // Clear the form
-      navigate('/dashboard'); // Go back to the dashboard
+      showSnackbar('Vehicle added successfully!', 'success'); // Show success notification
+      resetForm();
+      navigate('/dashboard');
     } catch (err) {
       setError(`Failed to add vehicle: ${err.message}`);
+      showSnackbar(`Failed to add vehicle: ${err.message}`, 'error'); // Show error notification
       console.error('Error adding vehicle:', err);
     } finally {
       setIsSubmitting(false);
-      setSubmitting(false); // Formik's internal submitting state
+      setSubmitting(false);
     }
   };
+
+  // ... (return statement) ...
 
   return (
     <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>

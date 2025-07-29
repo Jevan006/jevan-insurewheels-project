@@ -22,51 +22,29 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom'; // For navigation
 
-function Dashboard() {
-  const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterYear, setFilterYear] = useState('');
+// ... (imports) ...
 
-  // Replace with your actual MockAPI URL
-  const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles'; // e.g., 'https://669c1f0d1570401b3ed0b4d4.mockapi.io/api/v1/vehicles'
-
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setVehicles(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVehicles();
-  }, []); // Empty dependency array means this runs once on component mount
+function Dashboard({ showSnackbar }) { // Accept showSnackbar as prop
+  // ... (existing state and API_URL) ...
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
       try {
-        const response = await fetch(`${API_URL}/${id}`, {
-          method: 'DELETE',
-        });
+        // ... (existing fetch logic) ...
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          // ... (existing error handling) ...
         }
-        setVehicles(vehicles.filter(vehicle => vehicle.id !== id)); // Remove from UI
+        setVehicles(vehicles.filter(vehicle => vehicle.id !== id));
+        showSnackbar('Vehicle deleted successfully!', 'success'); // Show success notification
       } catch (error) {
         setError(error.message);
-        alert(`Failed to delete vehicle: ${error.message}`);
+        showSnackbar(`Failed to delete vehicle: ${error.message}`, 'error'); // Show error notification
+        alert(`Failed to delete vehicle: ${error.message}`); // Keep alert for critical confirmation
       }
     }
   };
+
+  // ... (rest of the component) ...
 
   // Filtered vehicles based on search term and year filter
   const filteredVehicles = vehicles.filter(vehicle => {

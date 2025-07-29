@@ -24,7 +24,7 @@ function Quotes() {
   const [error, setError] = useState(null);
 
   // Replace with your actual MockAPI URL
-  const API_URL = 'YOUR_MOCKAPI_VEHICLES_URL'; // Same URL as in Dashboard.jsx and others
+  const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles'; // Same URL as in Dashboard.jsx and others
 
   // Function to generate a random quote based on vehicle details
   const generateRandomQuote = useCallback((vehicle) => {
@@ -146,7 +146,7 @@ function Quotes() {
                   Plan: {quote.plan}
                 </Typography>
                 <Typography variant="h4" color="primary" sx={{ my: 2 }}>
-                  ${quote.price}
+                  R {quote.price}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 1 }}>
                   {quote.details}

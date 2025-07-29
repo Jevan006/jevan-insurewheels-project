@@ -18,35 +18,22 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
-function ConfirmQuote() {
-  const location = useLocation(); // Hook to access location object, including state
-  const navigate = useNavigate();
-  const { selectedQuote, vehicle } = location.state || {}; // Destructure data from location.state
+// ... (imports) ...
 
-  // Handle cases where direct navigation or refresh loses state
-  if (!selectedQuote || !vehicle) {
-    return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
-        <Alert severity="warning" sx={{ mb: 2 }}>
-          No quote or vehicle data found. Please select a vehicle and generate quotes first.
-        </Alert>
-        <Button variant="contained" onClick={() => navigate('/dashboard')}>
-          Go to Dashboard
-        </Button>
-      </Container>
-    );
-  }
+function ConfirmQuote({ showSnackbar }) { // Accept showSnackbar as prop
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { selectedQuote, vehicle } = location.state || {};
+
+  // ... (existing error handling for missing state) ...
 
   const handleConfirmPurchase = () => {
-    // In a real application, here you would:
-    // 1. Send data to your backend to finalize the purchase.
-    // 2. Handle payment processing.
-    // 3. Update vehicle status or create a new policy record.
-
-    // For this assignment, we'll just simulate success.
-    alert(`Congratulations! You have confirmed the ${selectedQuote.plan} plan from ${selectedQuote.provider} for your ${vehicle.make} ${vehicle.model} at $${selectedQuote.price}.`);
-    navigate('/dashboard'); // Go back to dashboard or a success page
+    // In a real application, you'd send this to a backend
+    showSnackbar(`Congratulations! Quote from ${selectedQuote.provider} confirmed.`, 'success');
+    navigate('/dashboard');
   };
+
+  // ... (return statement) ...
 
   return (
     <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
