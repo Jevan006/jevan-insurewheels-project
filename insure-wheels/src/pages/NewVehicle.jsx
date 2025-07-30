@@ -64,11 +64,14 @@ function NewVehicle() {
     <Container
       component={Paper}
       elevation={3}
-      maxWidth="sm"
+      maxWidth="sm" // Set an appropriate max-width for forms
       sx={{
         p: 4,
-        width: '100%',
         boxSizing: 'border-box',
+        mt: 4, // Add consistent top margin
+        mb: 4, // Add consistent bottom margin
+        ml: 'auto', // <--- Add for horizontal centering
+        mr: 'auto', // <--- Add for horizontal centering
       }}
     >
       <VehicleForm

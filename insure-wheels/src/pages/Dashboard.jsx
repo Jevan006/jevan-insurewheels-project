@@ -139,11 +139,15 @@ function Dashboard() {
     <Container
       component={Paper}
       elevation={3}
-      maxWidth="lg"
+      maxWidth="lg" // Set a sensible max width for the dashboard, e.g., "lg"
       sx={{
         p: 4,
-        width: '100%',
         boxSizing: 'border-box',
+        mt: 4, // Add some top margin to separate from AppBar
+        mb: 4, // Add some bottom margin
+        ml: 'auto', // <--- Add this for horizontal centering
+        mr: 'auto', // <--- Add this for horizontal centering
+        // width: '100%', // Can often be removed when using maxWidth and auto margins
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>

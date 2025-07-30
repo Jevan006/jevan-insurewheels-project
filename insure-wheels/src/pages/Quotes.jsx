@@ -1,3 +1,4 @@
+// src/pages/Quotes.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -13,7 +14,8 @@ import {
   ListItemText,
   Divider,
   Grid,
-  Chip
+  Chip,
+  ListItemIcon // Ensure this is imported!
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -99,8 +101,19 @@ function Quotes() {
       <Container
         component={Paper}
         elevation={3}
-        maxWidth="lg"
-        sx={{ p: 4, width: '100%', boxSizing: 'border-box', textAlign: 'center' }}
+        maxWidth="lg" // Match with content maxWidth
+        sx={{
+          p: 4,
+          mt: 4,
+          mb: 4, // Add bottom margin for consistency
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '200px', // Give some height for the spinner
+          ml: 'auto', // <--- Add for horizontal centering
+          mr: 'auto', // <--- Add for horizontal centering
+        }}
       >
         <CircularProgress />
         <Typography variant="h6" sx={{ mt: 2 }}>Loading vehicle and quotes...</Typography>
@@ -113,8 +126,15 @@ function Quotes() {
       <Container
         component={Paper}
         elevation={3}
-        maxWidth="lg"
-        sx={{ p: 4, width: '100%', boxSizing: 'border-box' }}
+        maxWidth="lg" // Match with content maxWidth
+        sx={{
+          p: 4,
+          mt: 4,
+          mb: 4, // Add bottom margin for consistency
+          ml: 'auto', // <--- Add for horizontal centering
+          mr: 'auto', // <--- Add for horizontal centering
+          textAlign: 'center',
+        }}
       >
         <Alert severity="error">Error: {error}</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
@@ -129,8 +149,15 @@ function Quotes() {
       <Container
         component={Paper}
         elevation={3}
-        maxWidth="lg"
-        sx={{ p: 4, width: '100%', boxSizing: 'border-box' }}
+        maxWidth="lg" // Match with content maxWidth
+        sx={{
+          p: 4,
+          mt: 4,
+          mb: 4, // Add bottom margin for consistency
+          ml: 'auto', // <--- Add for horizontal centering
+          mr: 'auto', // <--- Add for horizontal centering
+          textAlign: 'center',
+        }}
       >
         <Alert severity="warning">Vehicle details not found.</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
@@ -153,17 +180,21 @@ function Quotes() {
     <Container
       component={Paper}
       elevation={3}
-      maxWidth="lg"
+      maxWidth="lg" // <--- Set a sensible max width for the overall quotes page
       sx={{
         p: 4,
-        width: '100%',
         boxSizing: 'border-box',
+        mt: 4, // Add some top margin
+        mb: 4, // Add some bottom margin
+        ml: 'auto', // <--- Add for horizontal centering
+        mr: 'auto', // <--- Add for horizontal centering
       }}
     >
       <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
         Insurance Quotes for Your {vehicle.make} {vehicle.model} ({vehicle.year})
       </Typography>
 
+      {/* Vehicle Details Section */}
       <Box sx={{ mb: 4 }}>
         <Paper elevation={2} sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom sx={{ color: 'secondary.main' }}>
@@ -198,7 +229,7 @@ function Quotes() {
         Available Quotes
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={3} justifyContent="center" alignItems="stretch">
         {quotes.length === 0 ? (
           <Grid item xs={12}>
             <Alert severity="info" sx={{ mt: 2 }}>
@@ -207,8 +238,20 @@ function Quotes() {
           </Grid>
         ) : (
           quotes.map((quote) => (
-            <Grid item xs={12} md={4} key={quote.id}>
-              <Paper elevation={2} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Grid item xs={12} sm={6} md={4} key={quote.id}> {/* Changed md back to 4 for clean division */}
+              <Paper
+                elevation={2}
+                sx={{
+                  p: 3,
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  // Remove width: '100%' from here, let Grid item handle it
+                  // width: '100%',
+                  flexShrink: 0, // Add this to prevent shrinking
+                }}
+              >
                 <Box>
                   <Typography variant="h6" sx={{ color: 'primary.main', mb: 1 }}>
                     {quote.provider}
@@ -224,7 +267,11 @@ function Quotes() {
                       <ListItemText primary="Price" secondary={formatPrice(quote.price)} />
                     </ListItem>
                     <ListItem disablePadding>
-                      <ListItemText primary="Details" secondary={quote.details} />
+                      <ListItemText
+                        primary="Details"
+                        secondary={quote.details}
+                        sx={{ '& .MuiListItemText-secondary': { wordBreak: 'break-word' } }} // Apply word-break here
+                      />
                     </ListItem>
                   </List>
                 </Box>

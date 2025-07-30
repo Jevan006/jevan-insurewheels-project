@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from 'react';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
@@ -38,25 +39,23 @@ function App() {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh', // Ensure the background covers the full viewport height
-        // Apply background properties here if logged in
-        ...(isLoggedIn && {
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          position: 'relative',
-          '&::before': { // Pseudo-element for the blur effect
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backdropFilter: 'blur(5px)',
-            backgroundColor: 'rgba(0, 0, 0, 0.4)', // Slightly darker overlay for better text readability
-            zIndex: 0,
-          },
-        }),
+        // Apply background properties always
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        position: 'relative',
+        '&::before': { // Pseudo-element for the blur effect
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backdropFilter: 'blur(5px)',
+          backgroundColor: 'rgba(0, 0, 0, 0.4)', // Slightly darker overlay for better text readability
+          zIndex: 0,
+        },
       }}
     >
       {/* AppBar (Navigation Bar) - Conditionally rendered only if the user is logged in */}
@@ -86,7 +85,6 @@ function App() {
               textAlign: 'center',
               pointerEvents: 'none',
               maxWidth: '90%',
-              // Hide the text heading on very small screens if it obstructs content
               display: { xs: 'none', sm: 'block' },
             }}
           >
@@ -113,11 +111,12 @@ function App() {
           position: 'relative',
           paddingTop: isLoggedIn ? appBarHeight : 0,
           paddingBottom: isLoggedIn ? theme.spacing(4) : 0,
-          px: theme.spacing(2),
+          px: theme.spacing(2), // Keep universal horizontal padding for content area
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: isLoggedIn ? 'flex-start' : 'center',
+          alignItems: 'center', // <--- IMPORTANT: This centers all content horizontally
+          justifyContent: isLoggedIn ? 'flex-start' : 'center', // Center vertically only for login page
+          width: '100%', // Ensure this Box takes full available width
         }}
       >
         <Routes>
