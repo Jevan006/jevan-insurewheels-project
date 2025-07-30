@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
-import './index.css'; // Keep your existing index.css if it has specific resets
-import './style.css'; // <--- ADD THIS LINE to import your new global styles
+import './index.css';
+import './style.css';
 
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';

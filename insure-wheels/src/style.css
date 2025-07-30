@@ -1,33 +1,26 @@
-/* src/style.css */
-
-/* Basic CSS Reset/Overrides (optional, as MUI has some built-in) */
 html,
 body,
 #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100vh; /* Ensure the root element takes full height */
-  box-sizing: border-box; /* Include padding/border in element's total width/height */
+  min-height: 100vh;
+  box-sizing: border-box;
   overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 body {
-  font-family: "Roboto", sans-serif; /* Ensure Roboto or your chosen font is applied */
-  -webkit-font-smoothing: antialiased; /* Smoother fonts on WebKit browsers */
-  -moz-osx-font-smoothing: grayscale; /* Smoother fonts on Firefox (macOS) */
-  background-color: #f0f2f5; /* A very light grey background for general pages */
-  color: #333; /* Default text color */
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: #f0f2f5;
+  color: #333;
 }
 
-/* General Link Styling (if not handled by MUI Link or Button) */
 a {
   text-decoration: none;
-  color: inherit; /* Inherit color from parent by default */
+  color: inherit;
 }
 
-/* Custom Scrollbar (Optional, for a cleaner look) */
-/* Note: This is not supported in all browsers (e.g., Firefox needs specific properties) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -46,9 +39,3 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
-/* Add more custom styles here as needed */
-/* For example, if you want a subtle shadow on all paper elements (though MUI has elevation) */
-/* .MuiPaper-root {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
-} */

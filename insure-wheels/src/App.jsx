@@ -1,4 +1,4 @@
-// src/App.jsx
+
 import React from 'react';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
@@ -6,7 +6,7 @@ import { useAuth } from './context/AuthContext';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-// Import your page components
+//page components
 import Dashboard from './pages/Dashboard';
 import NewVehicle from './pages/NewVehicle';
 import EditVehicle from './pages/EditVehicle';
@@ -14,7 +14,6 @@ import Quotes from './pages/Quotes';
 import ConfirmQuote from './pages/ConfirmQuote';
 import LoginPage from './pages/LoginPage';
 
-// ProtectedRoute Component: A wrapper to protect routes
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
   if (!isLoggedIn) {
@@ -26,11 +25,9 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   const { isLoggedIn, logout } = useAuth();
   const theme = useTheme();
-  // Determine AppBar height dynamically based on breakpoints
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const appBarHeight = isXs ? '56px' : '64px'; // Default AppBar height for mobile vs desktop
 
-  // URL for a placeholder car image. You can replace this with your own image URL.
   const backgroundImage = 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
   return (
@@ -38,14 +35,13 @@ function App() {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh', // Ensure the background covers the full viewport height
-        // Apply background properties always
+        minHeight: '100vh', // background
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
         position: 'relative',
-        '&::before': { // Pseudo-element for the blur effect
+        '&::before': {
           content: '""',
           position: 'absolute',
           top: 0,
@@ -53,12 +49,12 @@ function App() {
           right: 0,
           bottom: 0,
           backdropFilter: 'blur(5px)',
-          backgroundColor: 'rgba(0, 0, 0, 0.4)', // Slightly darker overlay for better text readability
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
           zIndex: 0,
         },
       }}
     >
-      {/* AppBar (Navigation Bar) - Conditionally rendered only if the user is logged in */}
+      {/* AppBar (Navigation Bar) */}
       {isLoggedIn && (
         <>
           <AppBar position="static" sx={{ zIndex: 2 }}>
@@ -74,7 +70,7 @@ function App() {
             </Toolbar>
           </AppBar>
 
-          {/* "InsureWheels" Text Heading - Appears only when logged in */}
+          {/* "InsureWheels" Text Heading */}
           <Box
             sx={{
               position: 'absolute',
@@ -103,7 +99,6 @@ function App() {
         </>
       )}
 
-      {/* Routes Definition - This Box will contain your page content */}
       <Box
         sx={{
           flexGrow: 1,
@@ -111,12 +106,12 @@ function App() {
           position: 'relative',
           paddingTop: isLoggedIn ? appBarHeight : 0,
           paddingBottom: isLoggedIn ? theme.spacing(4) : 0,
-          px: theme.spacing(2), // Keep universal horizontal padding for content area
+          px: theme.spacing(2),
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center', // <--- IMPORTANT: This centers all content horizontally
-          justifyContent: isLoggedIn ? 'flex-start' : 'center', // Center vertically only for login page
-          width: '100%', // Ensure this Box takes full available width
+          alignItems: 'center',
+          justifyContent: isLoggedIn ? 'flex-start' : 'center',
+          width: '100%',
         }}
       >
         <Routes>

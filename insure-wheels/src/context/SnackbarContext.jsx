@@ -14,7 +14,7 @@ export const SnackbarProvider = ({ children }) => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-  // Function to show a notification
+  // Function to show notification
   const showSnackbar = (message, severity = 'info') => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);

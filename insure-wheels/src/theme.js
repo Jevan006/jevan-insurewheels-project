@@ -1,61 +1,58 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
-// Define your custom theme
 let theme = createTheme({
   palette: {
     primary: {
-      main: "#2196f3", // A shade of blue for primary actions (e.g., buttons)
+      main: "#2196f3",
     },
     secondary: {
-      main: "#ff9800", // A shade of orange for secondary actions or accents
+      main: "#ff9800",
     },
     error: {
-      main: "#f44336", // Standard red for errors
+      main: "#f44336",
     },
     warning: {
-      main: "#ffc107", // Yellow for warnings
+      main: "#ffc107",
     },
     info: {
-      main: "#2196f3", // Blue for informational messages
+      main: "#2196f3",
     },
     success: {
-      main: "#4caf50", // Green for success messages
+      main: "#4caf50",
     },
   },
   typography: {
-    fontFamily: "Roboto, sans-serif", // Use Roboto (MUI's default) or your preferred font
+    fontFamily: "Roboto, sans-serif",
     h4: {
-      fontWeight: 600, // Make main titles a bit bolder
+      fontWeight: 600,
     },
     h5: {
       fontWeight: 500,
     },
   },
-  // You can add more customizations here for components, spacing, etc.
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8, // Slightly more rounded buttons
+          borderRadius: 8,
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12, // More rounded cards
+          borderRadius: 12,
         },
       },
     },
     MuiTextField: {
       defaultProps: {
-        variant: "outlined", // Make all TextFields outlined by default
+        variant: "outlined",
       },
     },
   },
 });
 
-// Make font sizes responsive
 theme = responsiveFontSizes(theme);
 
 export default theme;

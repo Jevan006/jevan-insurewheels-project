@@ -101,18 +101,18 @@ function Quotes() {
       <Container
         component={Paper}
         elevation={3}
-        maxWidth="lg" // Match with content maxWidth
+        maxWidth="lg"
         sx={{
           p: 4,
           mt: 4,
-          mb: 4, // Add bottom margin for consistency
+          mb: 4,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '200px', // Give some height for the spinner
-          ml: 'auto', // <--- Add for horizontal centering
-          mr: 'auto', // <--- Add for horizontal centering
+          minHeight: '200px',
+          ml: 'auto',
+          mr: 'auto',
         }}
       >
         <CircularProgress />
@@ -126,13 +126,13 @@ function Quotes() {
       <Container
         component={Paper}
         elevation={3}
-        maxWidth="lg" // Match with content maxWidth
+        maxWidth="lg"
         sx={{
           p: 4,
           mt: 4,
-          mb: 4, // Add bottom margin for consistency
-          ml: 'auto', // <--- Add for horizontal centering
-          mr: 'auto', // <--- Add for horizontal centering
+          mb: 4,
+          ml: 'auto',
+          mr: 'auto',
           textAlign: 'center',
         }}
       >
@@ -149,13 +149,13 @@ function Quotes() {
       <Container
         component={Paper}
         elevation={3}
-        maxWidth="lg" // Match with content maxWidth
+        maxWidth="lg"
         sx={{
           p: 4,
           mt: 4,
-          mb: 4, // Add bottom margin for consistency
-          ml: 'auto', // <--- Add for horizontal centering
-          mr: 'auto', // <--- Add for horizontal centering
+          mb: 4,
+          ml: 'auto',
+          mr: 'auto',
           textAlign: 'center',
         }}
       >
@@ -180,14 +180,14 @@ function Quotes() {
     <Container
       component={Paper}
       elevation={3}
-      maxWidth="lg" // <--- Set a sensible max width for the overall quotes page
+      maxWidth="lg"
       sx={{
         p: 4,
         boxSizing: 'border-box',
-        mt: 4, // Add some top margin
-        mb: 4, // Add some bottom margin
-        ml: 'auto', // <--- Add for horizontal centering
-        mr: 'auto', // <--- Add for horizontal centering
+        mt: 4,
+        mb: 4,
+        ml: 'auto',
+        mr: 'auto',
       }}
     >
       <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
@@ -238,7 +238,7 @@ function Quotes() {
           </Grid>
         ) : (
           quotes.map((quote) => (
-            <Grid item xs={12} sm={6} md={4} key={quote.id}> {/* Changed md back to 4 for clean division */}
+            <Grid item xs={12} sm={6} md={4} key={quote.id}>
               <Paper
                 elevation={2}
                 sx={{
@@ -247,9 +247,8 @@ function Quotes() {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  // Remove width: '100%' from here, let Grid item handle it
                   // width: '100%',
-                  flexShrink: 0, // Add this to prevent shrinking
+                  flexShrink: 0,
                 }}
               >
                 <Box>
@@ -270,7 +269,7 @@ function Quotes() {
                       <ListItemText
                         primary="Details"
                         secondary={quote.details}
-                        sx={{ '& .MuiListItemText-secondary': { wordBreak: 'break-word' } }} // Apply word-break here
+                        sx={{ '& .MuiListItemText-secondary': { wordBreak: 'break-word' } }}
                       />
                     </ListItem>
                   </List>

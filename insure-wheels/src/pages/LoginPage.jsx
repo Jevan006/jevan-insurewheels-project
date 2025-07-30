@@ -7,7 +7,7 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
-  const { showSnackbar } = useSnackbar(); // Although login() calls it, good to have if you wanted independent snacbkar here.
+  const { showSnackbar } = useSnackbar();
 
   const handleSubmit = (event) => {
     event.preventDefault();

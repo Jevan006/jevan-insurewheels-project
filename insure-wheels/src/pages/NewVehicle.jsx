@@ -11,7 +11,7 @@ function NewVehicle() {
 
   const { showSnackbar } = useSnackbar();
 
-  // THIS IS YOUR CORRECT MOCKAPI.IO URL
+  // MOCKAPI.IO URL
   const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles';
 
   const initialValues = {
@@ -64,14 +64,14 @@ function NewVehicle() {
     <Container
       component={Paper}
       elevation={3}
-      maxWidth="sm" // Set an appropriate max-width for forms
+      maxWidth="sm"
       sx={{
         p: 4,
         boxSizing: 'border-box',
-        mt: 4, // Add consistent top margin
-        mb: 4, // Add consistent bottom margin
-        ml: 'auto', // <--- Add for horizontal centering
-        mr: 'auto', // <--- Add for horizontal centering
+        mt: 4,
+        mb: 4,
+        ml: 'auto',
+        mr: 'auto',
       }}
     >
       <VehicleForm

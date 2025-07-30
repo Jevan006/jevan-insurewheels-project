@@ -37,7 +37,7 @@ const VehicleForm = ({ initialValues, onSubmit, isSubmitting, error }) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
-        enableReinitialize={true} // Important for EditVehicle to load new initialValues
+        enableReinitialize={true} //for EditVehicle to load new initialValues
       >
         {({ errors, touched, isValid, dirty }) => (
           <Form>
@@ -111,7 +111,7 @@ const VehicleForm = ({ initialValues, onSubmit, isSubmitting, error }) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={isSubmitting || !isValid || !dirty} // Disable if submitting, invalid, or no changes
+                disabled={isSubmitting || !isValid || !dirty}
               >
                 {isSubmitting ? 'Saving...' : (initialValues.id ? 'Update Vehicle' : 'Add Vehicle')}
               </Button>

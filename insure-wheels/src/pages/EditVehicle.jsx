@@ -14,7 +14,7 @@ function EditVehicle() {
 
   const { showSnackbar } = useSnackbar();
 
-  // THIS IS YOUR CORRECT MOCKAPI.IO URL
+  // MOCKAPI.IO URL
   const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles';
 
   useEffect(() => {

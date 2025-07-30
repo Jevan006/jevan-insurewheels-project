@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from './SnackbarContext'; // Corrected import path
+import { useSnackbar } from './SnackbarContext';
 
 const AuthContext = createContext(null);
 
@@ -12,7 +12,6 @@ export const AuthProvider = ({ children }) => {
   const { showSnackbar } = useSnackbar();
 
   const login = (username, password) => {
-    // Simple hardcoded check for demonstration
     if (username === 'user' && password === 'password') {
       setIsLoggedIn(true);
       localStorage.setItem('isLoggedIn', 'true');
