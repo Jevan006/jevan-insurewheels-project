@@ -21,43 +21,98 @@ import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom'; // For navigation
+import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
 
-// ... (imports) ...
+function Dashboard() {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterYear, setFilterYear] = useState('');
 
-function Dashboard({ showSnackbar }) { // Accept showSnackbar as prop
-  // ... (existing state and API_URL) ...
+  // Get showSnackbar from context
+  const { showSnackbar } = useSnackbar();
 
+  // THIS IS YOUR CORRECT MOCKAPI.IO URL
+  const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles';
+
+  // useEffect hook to fetch vehicles when the component mounts
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+          // Attempt to parse error message from response if available
+          const errorText = await response.text(); // Get raw text to check for non-JSON
+          let errorMessage = `HTTP error! status: ${response.status}`;
+          try {
+              const errorData = JSON.parse(errorText);
+              errorMessage = errorData.message || errorMessage;
+          } catch (e) {
+              // If not JSON, use the raw text or default message
+              errorMessage = errorText || errorMessage;
+          }
+          throw new Error(errorMessage);
+        }
+        const data = await response.json();
+        setVehicles(data);
+      } catch (error) {
+        setError(error.message);
+        showSnackbar(`Error loading vehicles: ${error.message}`, 'error'); // Show error notification
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, [API_URL, showSnackbar]); // Add API_URL and showSnackbar to dependencies
+
+  // Function to handle vehicle deletion
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
       try {
-        // ... (existing fetch logic) ...
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
+        });
         if (!response.ok) {
-          // ... (existing error handling) ...
+          const errorText = await response.text();
+          let errorMessage = `HTTP error! status: ${response.status}`;
+          try {
+              const errorData = JSON.parse(errorText);
+              errorMessage = errorData.message || errorMessage;
+          } catch (e) {
+              errorMessage = errorText || errorMessage;
+          }
+          throw new Error(errorMessage);
         }
-        setVehicles(vehicles.filter(vehicle => vehicle.id !== id));
+        setVehicles(vehicles.filter(vehicle => vehicle.id !== id)); // Remove from UI
         showSnackbar('Vehicle deleted successfully!', 'success'); // Show success notification
       } catch (error) {
         setError(error.message);
         showSnackbar(`Failed to delete vehicle: ${error.message}`, 'error'); // Show error notification
-        alert(`Failed to delete vehicle: ${error.message}`); // Keep alert for critical confirmation
+        console.error(`Failed to delete vehicle: ${error.message}`);
       }
     }
   };
 
-  // ... (rest of the component) ...
-
-  // Filtered vehicles based on search term and year filter
+  // Filtered vehicles based on search term (make/model) and year filter
   const filteredVehicles = vehicles.filter(vehicle => {
+    // Check if vehicle and its properties exist before accessing them
+    if (!vehicle || !vehicle.make || !vehicle.model || !vehicle.year) {
+      return false; // Skip invalid vehicle entries
+    }
+
     const matchesSearch = searchTerm === '' ||
                           vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesYear = filterYear === '' ||
-                        String(vehicle.year) === filterYear; // Ensure comparison is string to string
+                        String(vehicle.year) === String(filterYear); // Ensure comparison is string to string
 
     return matchesSearch && matchesYear;
   });
 
+  // Render loading state
   if (loading) {
     return (
       <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
@@ -67,10 +122,14 @@ function Dashboard({ showSnackbar }) { // Accept showSnackbar as prop
     );
   }
 
+  // Render error state
   if (error) {
     return (
       <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
         <Alert severity="error">Error loading vehicles: {error}</Alert>
+        <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
+            Retry
+        </Button>
       </Container>
     );
   }
@@ -91,11 +150,12 @@ function Dashboard({ showSnackbar }) { // Accept showSnackbar as prop
         </Button>
       </Box>
 
-      <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
+      {/* Search and Filter Inputs */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}> {/* flexWrap for responsiveness */}
         <TextField
           label="Search by Make/Model"
           variant="outlined"
-          fullWidth
+          sx={{ flexGrow: 1 }} // Allows it to grow and take available space
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -112,10 +172,11 @@ function Dashboard({ showSnackbar }) { // Accept showSnackbar as prop
           type="number" // To allow number input
           value={filterYear}
           onChange={(e) => setFilterYear(e.target.value)}
-          sx={{ width: '200px' }} // Give it a fixed width
+          sx={{ width: { xs: '100%', sm: '200px' } }} // Responsive width
         />
       </Box>
 
+      {/* Conditional rendering for no vehicles found/available */}
       {filteredVehicles.length === 0 && (searchTerm !== '' || filterYear !== '') ? (
         <Alert severity="info" sx={{ mt: 3 }}>
           No vehicles found matching your search/filter criteria.

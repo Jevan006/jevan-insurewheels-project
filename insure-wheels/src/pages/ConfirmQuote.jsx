@@ -12,28 +12,52 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Grid, // ADDED: Grid import
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
 
-// ... (imports) ...
-
-function ConfirmQuote({ showSnackbar }) { // Accept showSnackbar as prop
+function ConfirmQuote() {
   const location = useLocation();
   const navigate = useNavigate();
   const { selectedQuote, vehicle } = location.state || {};
 
-  // ... (existing error handling for missing state) ...
+  // Get showSnackbar from context
+  const { showSnackbar } = useSnackbar();
+
+  // Handle cases where state might be missing (e.g., direct navigation or refresh)
+  if (!selectedQuote || !vehicle) {
+    return (
+      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
+        <Alert severity="error">
+          No quote or vehicle details found. Please select a vehicle and generate quotes first.
+        </Alert>
+        <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
+          Go to Dashboard
+        </Button>
+      </Container>
+    );
+  }
 
   const handleConfirmPurchase = () => {
-    // In a real application, you'd send this to a backend
+    // In a real application, you'd send this confirmation to a backend
+    // For this project, we'll just show a success message and navigate
     showSnackbar(`Congratulations! Quote from ${selectedQuote.provider} confirmed.`, 'success');
     navigate('/dashboard');
   };
 
-  // ... (return statement) ...
+  const formatPrice = (price) => {
+    // Ensure currency formatting matches your quotes page
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(price);
+  };
 
   return (
     <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
@@ -59,7 +83,7 @@ function ConfirmQuote({ showSnackbar }) { // Accept showSnackbar as prop
               </ListItem>
               <ListItem>
                 <ListItemIcon><PriceCheckIcon /></ListItemIcon>
-                <ListItemText primary="Price" secondary={`$${selectedQuote.price}`} />
+                <ListItemText primary="Price" secondary={formatPrice(selectedQuote.price)} />
               </ListItem>
               <ListItem>
                 <ListItemText primary="Details" secondary={selectedQuote.details} />

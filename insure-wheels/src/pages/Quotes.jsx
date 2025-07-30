@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -7,90 +7,96 @@ import {
   Alert,
   Box,
   Paper,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
   Button,
+  List,
+  ListItem,
+  ListItemText,
   Divider,
+  Grid,
+  Chip // For displaying status
 } from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
+import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
 
 function Quotes() {
-  const { vehicleId } = useParams(); // Get the vehicle ID from the URL
+  const { vehicleId } = useParams(); // Get vehicle ID from URL
   const navigate = useNavigate();
   const [vehicle, setVehicle] = useState(null);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Replace with your actual MockAPI URL
-  const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles'; // Same URL as in Dashboard.jsx and others
+  // Get showSnackbar from context
+  const { showSnackbar } = useSnackbar();
 
-  // Function to generate a random quote based on vehicle details
-  const generateRandomQuote = useCallback((vehicle) => {
-    if (!vehicle) return null;
+  // THIS IS YOUR CORRECT MOCKAPI.IO URL for vehicles
+  const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles';
 
-    const basePrice = 500; // Starting point
-    let calculatedPrice = basePrice;
-
-    // Factors for randomizing the quote
-    const makeFactor = vehicle.make.length * 5; // Simple example: longer make name, slightly higher price
-    const yearFactor = (new Date().getFullYear() - vehicle.year) * 10; // Older car, slightly higher "risk" price
-    const mileageFactor = Math.floor(vehicle.mileage / 1000) * 0.5; // Every 1000 miles adds a small amount
-    const randomFluctuation = Math.random() * 200 - 100; // +/- 100
-
-    calculatedPrice += makeFactor + yearFactor + mileageFactor + randomFluctuation;
-
-    // Ensure price is not negative and round to 2 decimal places
-    calculatedPrice = Math.max(100, calculatedPrice).toFixed(2);
-
-    // Generate a random provider name
-    const providers = ['InsurePro', 'SafeDrive', 'AutoGuard', 'RelianceSure', 'QuickCover'];
-    const randomProvider = providers[Math.floor(Math.random() * providers.length)];
-
-    // Generate a random plan type
-    const plans = ['Basic', 'Standard', 'Premium'];
-    const randomPlan = plans[Math.floor(Math.random() * plans.length)];
-
-
-    return {
-      id: Math.random().toString(36).substring(2, 11), // Simple unique ID for the quote
-      provider: randomProvider,
-      plan: randomPlan,
-      price: parseFloat(calculatedPrice),
-      details: `Coverage for ${vehicle.make} ${vehicle.model} (${vehicle.year}). Plan includes ${randomPlan} features.`,
-    };
-  }, []);
+  // Define a separate URL for quotes (if you had one, for now it's mock data)
+  const QUOTES_API_URL = 'https://example.com/api/quotes'; // This is just a placeholder, as quotes are simulated
 
   useEffect(() => {
-    const fetchVehicleAndGenerateQuotes = async () => {
+    const fetchVehicleAndQuotes = async () => {
       try {
         // 1. Fetch Vehicle Details
-        const response = await fetch(`${API_URL}/${vehicleId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        const vehicleResponse = await fetch(`${API_URL}/${vehicleId}`);
+        if (!vehicleResponse.ok) {
+          const errorText = await vehicleResponse.text();
+          let errorMessage = `HTTP error! status: ${vehicleResponse.status}`;
+          try {
+              const errorData = JSON.parse(errorText);
+              errorMessage = errorData.message || errorMessage;
+          } catch (e) {
+              errorMessage = errorText || errorMessage;
+          }
+          throw new Error(`Failed to fetch vehicle: ${errorMessage}`);
         }
-        const vehicleData = await response.json();
+        const vehicleData = await vehicleResponse.json();
         setVehicle(vehicleData);
 
-        // 2. Generate Quotes once vehicle data is available
-        const generatedQuotes = Array.from({ length: 3 }).map(() => generateRandomQuote(vehicleData));
-        setQuotes(generatedQuotes.sort((a, b) => a.price - b.price)); // Sort by price, cheapest first
+        // 2. Simulate Fetching Quotes
+        // In a real app, you'd make an API call to a quotes service
+        // For now, we generate mock quotes based on vehicle details.
+        const generatedQuotes = [
+          {
+            id: 'quote1',
+            provider: 'InsurePro',
+            plan: 'Comprehensive Cover',
+            price: (Math.random() * 5000 + 1500).toFixed(2), // Random price R1500 - R6500
+            details: `Full cover including accident, theft, and third-party liability. Deductible R${(Math.random() * 500 + 1000).toFixed(0)}.`,
+          },
+          {
+            id: 'quote2',
+            provider: 'SafeDrive Insurance',
+            plan: 'Third-Party, Fire & Theft',
+            price: (Math.random() * 3000 + 1000).toFixed(2), // Random price R1000 - R4000
+            details: `Covers third-party damage, fire, and theft. Limited accidental cover. Deductible R${(Math.random() * 300 + 800).toFixed(0)}.`,
+          },
+          {
+            id: 'quote3',
+            provider: 'BudgetGuard',
+            plan: 'Third-Party Only',
+            price: (Math.random() * 1500 + 500).toFixed(2), // Random price R500 - R2000
+            details: `Basic cover for damages to other vehicles/property. No cover for your vehicle. Deductible R${(Math.random() * 200 + 500).toFixed(0)}.`,
+          },
+        ];
+        setQuotes(generatedQuotes);
+
       } catch (err) {
-        setError(`Failed to load vehicle or generate quotes: ${err.message}`);
-        console.error('Error in Quotes component:', err);
+        setError(err.message);
+        showSnackbar(`Error: ${err.message}`, 'error');
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVehicleAndGenerateQuotes();
-  }, [vehicleId, generateRandomQuote, API_URL]); // Re-run if vehicleId or generator changes
+    fetchVehicleAndQuotes();
+  }, [vehicleId, API_URL, showSnackbar]); // Dependencies
 
   const handleSelectQuote = (selectedQuote) => {
-    // You would typically save the selected quote and vehicle info to state or context
-    // and then navigate to the confirmation page.
-    // For now, we'll pass it via navigate state.
     navigate('/confirm', { state: { selectedQuote, vehicle } });
   };
 
@@ -98,7 +104,7 @@ function Quotes() {
     return (
       <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
         <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>Loading vehicle and generating quotes...</Typography>
+        <Typography variant="h6" sx={{ mt: 2 }}>Loading vehicle and quotes...</Typography>
       </Container>
     );
   }
@@ -108,7 +114,7 @@ function Quotes() {
       <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
         <Alert severity="error">Error: {error}</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
-          Back to Dashboard
+            Back to Dashboard
         </Button>
       </Container>
     );
@@ -117,61 +123,111 @@ function Quotes() {
   if (!vehicle) {
     return (
       <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
-        <Alert severity="warning">Vehicle not found or data is missing.</Alert>
+        <Alert severity="warning">Vehicle details not found.</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
-          Back to Dashboard
+            Back to Dashboard
         </Button>
       </Container>
     );
   }
 
+  const formatPrice = (price) => {
+    // Format as South African Rand (R)
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(price);
+  };
+
   return (
     <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
-      <Typography variant="h4" gutterBottom align="center">
-        Quotes for {vehicle.make} {vehicle.model} ({vehicle.year})
-      </Typography>
-      <Typography variant="subtitle1" gutterBottom align="center" color="text.secondary" sx={{ mb: 4 }}>
-        VIN: {vehicle.vin} | Color: {vehicle.color} | Mileage: {vehicle.mileage}
+      <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
+        Insurance Quotes for Your {vehicle.make} {vehicle.model} ({vehicle.year})
       </Typography>
 
-      <Grid container spacing={3} justifyContent="center">
-        {quotes.map((quote) => (
-          <Grid item xs={12} sm={6} md={4} key={quote.id}>
-            <Card elevation={4} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h5" component="div" sx={{ mb: 1 }}>
-                  {quote.provider}
-                </Typography>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Plan: {quote.plan}
-                </Typography>
-                <Typography variant="h4" color="primary" sx={{ my: 2 }}>
-                  R {quote.price}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  {quote.details}
-                </Typography>
-              </CardContent>
-              <Divider />
-              <CardActions sx={{ justifyContent: 'center', p: 2 }}>
+      <Box sx={{ mb: 4 }}>
+        <Paper elevation={2} sx={{ p: 3 }}>
+          <Typography variant="h5" gutterBottom sx={{ color: 'secondary.main' }}>
+            Vehicle Details
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <List dense>
+            <ListItem>
+              <ListItemIcon><DirectionsCarIcon /></ListItemIcon>
+              <ListItemText primary="Make" secondary={vehicle.make} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Model" secondary={vehicle.model} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Year" secondary={vehicle.year} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="VIN" secondary={vehicle.vin} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Color" secondary={vehicle.color} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Mileage" secondary={vehicle.mileage} />
+            </ListItem>
+          </List>
+        </Paper>
+      </Box>
+
+      <Typography variant="h5" gutterBottom sx={{ mt: 4, mb: 2, textAlign: 'center' }}>
+        Available Quotes
+      </Typography>
+
+      <Grid container spacing={3}>
+        {quotes.length === 0 ? (
+          <Grid item xs={12}>
+            <Alert severity="info" sx={{ mt: 2 }}>
+              No quotes found for this vehicle.
+            </Alert>
+          </Grid>
+        ) : (
+          quotes.map((quote) => (
+            <Grid item xs={12} md={4} key={quote.id}>
+              <Paper elevation={2} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h6" sx={{ color: 'primary.main', mb: 1 }}>
+                    {quote.provider}
+                  </Typography>
+                  <Divider sx={{ mb: 2 }} />
+                  <List dense>
+                    <ListItem disablePadding>
+                      <ListItemIcon><CheckCircleOutlineIcon /></ListItemIcon>
+                      <ListItemText primary="Plan" secondary={quote.plan} />
+                    </ListItem>
+                    <ListItem disablePadding>
+                      <ListItemIcon><PriceCheckIcon /></ListItemIcon>
+                      <ListItemText primary="Price" secondary={formatPrice(quote.price)} />
+                    </ListItem>
+                    <ListItem disablePadding>
+                      <ListItemText primary="Details" secondary={quote.details} />
+                    </ListItem>
+                  </List>
+                </Box>
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleSelectQuote(quote)}
                   fullWidth
+                  sx={{ mt: 3 }}
+                  onClick={() => handleSelectQuote(quote)}
                 >
                   Select This Quote
                 </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
+              </Paper>
+            </Grid>
+          ))
+        )}
       </Grid>
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <Button
-          variant="outlined"
-          onClick={() => navigate('/dashboard')}
-        >
+
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Button variant="outlined" onClick={() => navigate('/dashboard')}>
           Back to Dashboard
         </Button>
       </Box>
