@@ -1,22 +1,23 @@
 import React, { createContext, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from './SnackbarContext'; // Corrected import path
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children, showSnackbar }) => {
-  // Initialize isLoggedIn from localStorage or default to false
+export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem('isLoggedIn') === 'true'
   );
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const login = (username, password) => {
     // Simple hardcoded check for demonstration
     if (username === 'user' && password === 'password') {
       setIsLoggedIn(true);
-      localStorage.setItem('isLoggedIn', 'true'); // Persist login state
+      localStorage.setItem('isLoggedIn', 'true');
       showSnackbar('Login successful!', 'success');
-      navigate('/dashboard'); // Navigate to dashboard on success
+      navigate('/dashboard');
       return true;
     } else {
       showSnackbar('Invalid credentials!', 'error');
@@ -26,9 +27,9 @@ export const AuthProvider = ({ children, showSnackbar }) => {
 
   const logout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem('isLoggedIn'); // Clear login state
+    localStorage.removeItem('isLoggedIn');
     showSnackbar('Logged out successfully!', 'info');
-    navigate('/login'); // Navigate back to login page on logout
+    navigate('/login');
   };
 
   return (

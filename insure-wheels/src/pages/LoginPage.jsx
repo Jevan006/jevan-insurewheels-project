@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
 import { Container, Typography, TextField, Button, Box, Paper } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
+import { useSnackbar } from '../context/SnackbarContext';
 
-function LoginPage() { // No longer needs showSnackbar as a prop
+function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
-  const { showSnackbar } = useSnackbar(); // Use showSnackbar from context
+  const { showSnackbar } = useSnackbar(); // Although login() calls it, good to have if you wanted independent snacbkar here.
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // The login function in AuthContext already calls showSnackbar,
-    // so you don't need to call it directly here unless you want extra handling.
     login(username, password);
   };
 
   return (
     <Container component={Paper} elevation={6} sx={{
       p: 4,
-      mt: 8,
       maxWidth: '400px',
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

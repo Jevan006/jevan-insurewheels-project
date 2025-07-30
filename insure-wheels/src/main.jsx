@@ -5,8 +5,8 @@ import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme'; // Assuming you have a theme.js or theme.jsx file
-import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
-import { SnackbarProvider } from './context/SnackbarContext'; // Import SnackbarProvider
+import { AuthProvider } from './context/AuthContext';
+import { SnackbarProvider } from './context/SnackbarContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

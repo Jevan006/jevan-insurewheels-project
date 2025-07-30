@@ -13,29 +13,25 @@ import {
   ListItemText,
   Divider,
   Grid,
-  Chip // For displaying status
+  Chip
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
-import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
+import { useSnackbar } from '../context/SnackbarContext';
 
 function Quotes() {
-  const { vehicleId } = useParams(); // Get vehicle ID from URL
+  const { vehicleId } = useParams();
   const navigate = useNavigate();
   const [vehicle, setVehicle] = useState(null);
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get showSnackbar from context
   const { showSnackbar } = useSnackbar();
 
   // THIS IS YOUR CORRECT MOCKAPI.IO URL for vehicles
   const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles';
-
-  // Define a separate URL for quotes (if you had one, for now it's mock data)
-  const QUOTES_API_URL = 'https://example.com/api/quotes'; // This is just a placeholder, as quotes are simulated
 
   useEffect(() => {
     const fetchVehicleAndQuotes = async () => {
@@ -57,8 +53,6 @@ function Quotes() {
         setVehicle(vehicleData);
 
         // 2. Simulate Fetching Quotes
-        // In a real app, you'd make an API call to a quotes service
-        // For now, we generate mock quotes based on vehicle details.
         const generatedQuotes = [
           {
             id: 'quote1',
@@ -94,7 +88,7 @@ function Quotes() {
     };
 
     fetchVehicleAndQuotes();
-  }, [vehicleId, API_URL, showSnackbar]); // Dependencies
+  }, [vehicleId, API_URL, showSnackbar]);
 
   const handleSelectQuote = (selectedQuote) => {
     navigate('/confirm', { state: { selectedQuote, vehicle } });
@@ -102,7 +96,12 @@ function Quotes() {
 
   if (loading) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="lg"
+        sx={{ p: 4, width: '100%', boxSizing: 'border-box', textAlign: 'center' }}
+      >
         <CircularProgress />
         <Typography variant="h6" sx={{ mt: 2 }}>Loading vehicle and quotes...</Typography>
       </Container>
@@ -111,7 +110,12 @@ function Quotes() {
 
   if (error) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="lg"
+        sx={{ p: 4, width: '100%', boxSizing: 'border-box' }}
+      >
         <Alert severity="error">Error: {error}</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
             Back to Dashboard
@@ -122,7 +126,12 @@ function Quotes() {
 
   if (!vehicle) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="lg"
+        sx={{ p: 4, width: '100%', boxSizing: 'border-box' }}
+      >
         <Alert severity="warning">Vehicle details not found.</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
             Back to Dashboard
@@ -132,7 +141,6 @@ function Quotes() {
   }
 
   const formatPrice = (price) => {
-    // Format as South African Rand (R)
     return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
       currency: 'ZAR',
@@ -142,7 +150,16 @@ function Quotes() {
   };
 
   return (
-    <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+    <Container
+      component={Paper}
+      elevation={3}
+      maxWidth="lg"
+      sx={{
+        p: 4,
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
         Insurance Quotes for Your {vehicle.make} {vehicle.model} ({vehicle.year})
       </Typography>

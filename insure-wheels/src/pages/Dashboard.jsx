@@ -15,13 +15,13 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  Button // For future actions like Add/Edit/Delete
+  Button
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link } from 'react-router-dom'; // For navigation
-import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
+import { Link } from 'react-router-dom';
+import { useSnackbar } from '../context/SnackbarContext';
 
 function Dashboard() {
   const [vehicles, setVehicles] = useState([]);
@@ -30,26 +30,22 @@ function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterYear, setFilterYear] = useState('');
 
-  // Get showSnackbar from context
   const { showSnackbar } = useSnackbar();
 
   // THIS IS YOUR CORRECT MOCKAPI.IO URL
   const API_URL = 'https://688927204c55d5c73951bb57.mockapi.io/vehicles';
 
-  // useEffect hook to fetch vehicles when the component mounts
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
         const response = await fetch(API_URL);
         if (!response.ok) {
-          // Attempt to parse error message from response if available
-          const errorText = await response.text(); // Get raw text to check for non-JSON
+          const errorText = await response.text();
           let errorMessage = `HTTP error! status: ${response.status}`;
           try {
               const errorData = JSON.parse(errorText);
               errorMessage = errorData.message || errorMessage;
           } catch (e) {
-              // If not JSON, use the raw text or default message
               errorMessage = errorText || errorMessage;
           }
           throw new Error(errorMessage);
@@ -58,16 +54,15 @@ function Dashboard() {
         setVehicles(data);
       } catch (error) {
         setError(error.message);
-        showSnackbar(`Error loading vehicles: ${error.message}`, 'error'); // Show error notification
+        showSnackbar(`Error loading vehicles: ${error.message}`, 'error');
       } finally {
         setLoading(false);
       }
     };
 
     fetchVehicles();
-  }, [API_URL, showSnackbar]); // Add API_URL and showSnackbar to dependencies
+  }, [API_URL, showSnackbar]);
 
-  // Function to handle vehicle deletion
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
       try {
@@ -85,21 +80,19 @@ function Dashboard() {
           }
           throw new Error(errorMessage);
         }
-        setVehicles(vehicles.filter(vehicle => vehicle.id !== id)); // Remove from UI
-        showSnackbar('Vehicle deleted successfully!', 'success'); // Show success notification
+        setVehicles(vehicles.filter(vehicle => vehicle.id !== id));
+        showSnackbar('Vehicle deleted successfully!', 'success');
       } catch (error) {
         setError(error.message);
-        showSnackbar(`Failed to delete vehicle: ${error.message}`, 'error'); // Show error notification
+        showSnackbar(`Failed to delete vehicle: ${error.message}`, 'error');
         console.error(`Failed to delete vehicle: ${error.message}`);
       }
     }
   };
 
-  // Filtered vehicles based on search term (make/model) and year filter
   const filteredVehicles = vehicles.filter(vehicle => {
-    // Check if vehicle and its properties exist before accessing them
     if (!vehicle || !vehicle.make || !vehicle.model || !vehicle.year) {
-      return false; // Skip invalid vehicle entries
+      return false;
     }
 
     const matchesSearch = searchTerm === '' ||
@@ -107,25 +100,33 @@ function Dashboard() {
                           vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesYear = filterYear === '' ||
-                        String(vehicle.year) === String(filterYear); // Ensure comparison is string to string
+                        String(vehicle.year) === String(filterYear);
 
     return matchesSearch && matchesYear;
   });
 
-  // Render loading state
   if (loading) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="lg"
+        sx={{ p: 4, width: '100%', boxSizing: 'border-box', textAlign: 'center' }}
+      >
         <CircularProgress />
         <Typography variant="h6" sx={{ mt: 2 }}>Loading vehicles...</Typography>
       </Container>
     );
   }
 
-  // Render error state
   if (error) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="lg"
+        sx={{ p: 4, width: '100%', boxSizing: 'border-box' }}
+      >
         <Alert severity="error">Error loading vehicles: {error}</Alert>
         <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
             Retry
@@ -135,7 +136,16 @@ function Dashboard() {
   }
 
   return (
-    <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+    <Container
+      component={Paper}
+      elevation={3}
+      maxWidth="lg"
+      sx={{
+        p: 4,
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" gutterBottom>
           Vehicle Dashboard
@@ -143,19 +153,18 @@ function Dashboard() {
         <Button
           variant="contained"
           color="primary"
-          component={Link} // Use Link component for navigation
+          component={Link}
           to="/vehicles/new"
         >
           Add New Vehicle
         </Button>
       </Box>
 
-      {/* Search and Filter Inputs */}
-      <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}> {/* flexWrap for responsiveness */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
         <TextField
           label="Search by Make/Model"
           variant="outlined"
-          sx={{ flexGrow: 1 }} // Allows it to grow and take available space
+          sx={{ flexGrow: 1 }}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -169,14 +178,13 @@ function Dashboard() {
         <TextField
           label="Filter by Year"
           variant="outlined"
-          type="number" // To allow number input
+          type="number"
           value={filterYear}
           onChange={(e) => setFilterYear(e.target.value)}
-          sx={{ width: { xs: '100%', sm: '200px' } }} // Responsive width
+          sx={{ width: { xs: '100%', sm: '200px' } }}
         />
       </Box>
 
-      {/* Conditional rendering for no vehicles found/available */}
       {filteredVehicles.length === 0 && (searchTerm !== '' || filterYear !== '') ? (
         <Alert severity="info" sx={{ mt: 3 }}>
           No vehicles found matching your search/filter criteria.

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'; // Import Box
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useAuth } from './context/AuthContext';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // Import your page components
 import Dashboard from './pages/Dashboard';
@@ -11,7 +13,7 @@ import Quotes from './pages/Quotes';
 import ConfirmQuote from './pages/ConfirmQuote';
 import LoginPage from './pages/LoginPage';
 
-// ProtectedRoute Component
+// ProtectedRoute Component: A wrapper to protect routes
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
   if (!isLoggedIn) {
@@ -22,6 +24,10 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   const { isLoggedIn, logout } = useAuth();
+  const theme = useTheme();
+  // Determine AppBar height dynamically based on breakpoints
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const appBarHeight = isXs ? '56px' : '64px'; // Default AppBar height for mobile vs desktop
 
   // URL for a placeholder car image. You can replace this with your own image URL.
   const backgroundImage = 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
@@ -29,17 +35,16 @@ function App() {
   return (
     <Box
       sx={{
-        flexGrow: 1,
-        minHeight: '100vh', // Ensure the background covers the full viewport height
         display: 'flex',
         flexDirection: 'column',
+        minHeight: '100vh', // Ensure the background covers the full viewport height
         // Apply background properties here if logged in
         ...(isLoggedIn && {
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed', // Makes the background scroll with content
-          position: 'relative', // Needed for absolute positioning of blur and text overlay
+          backgroundAttachment: 'fixed',
+          position: 'relative',
           '&::before': { // Pseudo-element for the blur effect
             content: '""',
             position: 'absolute',
@@ -47,9 +52,9 @@ function App() {
             left: 0,
             right: 0,
             bottom: 0,
-            backdropFilter: 'blur(5px)', // Blur effect
-            backgroundColor: 'rgba(0, 0, 0, 0.3)', // Optional: slight overlay for better text readability
-            zIndex: 0, // Ensure it's behind the content but above the image
+            backdropFilter: 'blur(5px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)', // Slightly darker overlay for better text readability
+            zIndex: 0,
           },
         }),
       }}
@@ -57,7 +62,7 @@ function App() {
       {/* AppBar (Navigation Bar) - Conditionally rendered only if the user is logged in */}
       {isLoggedIn && (
         <>
-          <AppBar position="static" sx={{ zIndex: 2 }}> {/* Ensure AppBar is on top */}
+          <AppBar position="static" sx={{ zIndex: 2 }}>
             <Toolbar>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -74,23 +79,24 @@ function App() {
           <Box
             sx={{
               position: 'absolute',
-              top: '50%', // Center vertically
-              left: '50%', // Center horizontally
-              transform: 'translate(-50%, -50%)', // Adjust for exact centering
-              zIndex: 1, // Ensure it's above the blurred background
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1,
               textAlign: 'center',
-              pointerEvents: 'none', // Allow clicks to pass through to elements below
-              maxWidth: '90%', // Prevent text from going off screen on small devices
+              pointerEvents: 'none',
+              maxWidth: '90%',
+              // Hide the text heading on very small screens if it obstructs content
+              display: { xs: 'none', sm: 'block' },
             }}
           >
             <Typography
-              variant="h2" // Large heading
+              variant="h2"
               sx={{
-                color: 'white', // White text for contrast
-                textShadow: '2px 2px 4px rgba(0,0,0,0.7)', // Add shadow for readability
+                color: 'white',
+                textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
                 fontWeight: 'bold',
-                // Responsive font size
-                fontSize: { xs: '3rem', sm: '4rem', md: '5rem' },
+                fontSize: { xs: '2.5rem', sm: '3.5rem', md: '5rem' },
               }}
             >
               InsureWheels
@@ -99,13 +105,19 @@ function App() {
         </>
       )}
 
-      {/* Routes Definition - Wrapped in a Box to control its z-index and padding */}
+      {/* Routes Definition - This Box will contain your page content */}
       <Box
         sx={{
-          flexGrow: 1, // Allows content area to grow and take available space
-          zIndex: 2, // Ensure content is above the background and title
-          position: 'relative', // Establish new stacking context
-          paddingTop: isLoggedIn ? 0 : 0, // No specific padding if appbar is present, pages already have mt
+          flexGrow: 1,
+          zIndex: 2,
+          position: 'relative',
+          paddingTop: isLoggedIn ? appBarHeight : 0,
+          paddingBottom: isLoggedIn ? theme.spacing(4) : 0,
+          px: theme.spacing(2),
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: isLoggedIn ? 'flex-start' : 'center',
         }}
       >
         <Routes>

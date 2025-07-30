@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import VehicleForm from '../components/VehicleForm';
 import { Container, Paper, Typography, CircularProgress, Alert, Button } from '@mui/material';
-import { useSnackbar } from '../context/SnackbarContext'; // Import useSnackbar
-
+import { useSnackbar } from '../context/SnackbarContext';
 
 function EditVehicle() {
-  const { id } = useParams(); // Get the vehicle ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [initialValues, setInitialValues] = useState(null); // State to hold fetched vehicle data
+  const [initialValues, setInitialValues] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get showSnackbar from context
   const { showSnackbar } = useSnackbar();
 
   // THIS IS YOUR CORRECT MOCKAPI.IO URL
@@ -22,7 +20,7 @@ function EditVehicle() {
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const response = await fetch(`${API_URL}/${id}`); // Fetch specific vehicle by ID
+        const response = await fetch(`${API_URL}/${id}`);
         if (!response.ok) {
           const errorText = await response.text();
           let errorMessage = `HTTP error! status: ${response.status}`;
@@ -35,10 +33,10 @@ function EditVehicle() {
           throw new Error(errorMessage);
         }
         const data = await response.json();
-        setInitialValues(data); // Set the fetched data as initial values for the form
+        setInitialValues(data);
       } catch (err) {
         setError(`Failed to load vehicle: ${err.message}`);
-        showSnackbar(`Failed to load vehicle: ${err.message}`, 'error'); // Show error notification
+        showSnackbar(`Failed to load vehicle: ${err.message}`, 'error');
         console.error('Error fetching vehicle:', err);
       } finally {
         setLoading(false);
@@ -46,22 +44,20 @@ function EditVehicle() {
     };
 
     fetchVehicle();
-  }, [id, API_URL, showSnackbar]); // Re-fetch if the ID or API_URL or showSnackbar changes
+  }, [id, API_URL, showSnackbar]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsSubmitting(true);
-    setError(null); // Clear previous errors
+    setError(null);
     try {
-      // MockAPI.io often requires the ID in the body for PUT/PATCH, but primarily uses it in the URL
-      // Filter out the 'id' from values before sending if MockAPI handles it automatically via URL
-      const { id, ...dataToSend } = values; // Destructure id out, keep other data
+      const { id, ...dataToSend } = values;
 
       const response = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT', // Use PUT for updating
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dataToSend), // Send updated values as JSON (without the ID if MockAPI handles it)
+        body: JSON.stringify(dataToSend),
       });
 
       if (!response.ok) {
@@ -76,11 +72,11 @@ function EditVehicle() {
         throw new Error(errorMessage);
       }
 
-      showSnackbar('Vehicle updated successfully!', 'success'); // Show success notification
-      navigate('/dashboard'); // Go back to the dashboard after successful update
+      showSnackbar('Vehicle updated successfully!', 'success');
+      navigate('/dashboard');
     } catch (err) {
       setError(`Failed to update vehicle: ${err.message}`);
-      showSnackbar(`Failed to update vehicle: ${err.message}`, 'error'); // Show error notification
+      showSnackbar(`Failed to update vehicle: ${err.message}`, 'error');
       console.error('Error updating vehicle:', err);
     } finally {
       setIsSubmitting(false);
@@ -90,7 +86,18 @@ function EditVehicle() {
 
   if (loading) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4, textAlign: 'center' }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="md"
+        sx={{
+          p: 4,
+          mt: 2,
+          textAlign: 'center',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
         <CircularProgress />
         <Typography variant="h6" sx={{ mt: 2 }}>Loading vehicle data...</Typography>
       </Container>
@@ -99,7 +106,18 @@ function EditVehicle() {
 
   if (error) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="md"
+        sx={{
+          p: 4,
+          mt: 2,
+          textAlign: 'center',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
         <Alert severity="error">Error: {error}</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
             Back to Dashboard
@@ -110,7 +128,18 @@ function EditVehicle() {
 
   if (!initialValues) {
     return (
-      <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+      <Container
+        component={Paper}
+        elevation={3}
+        maxWidth="md"
+        sx={{
+          p: 4,
+          mt: 2,
+          textAlign: 'center',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
         <Alert severity="warning">Vehicle not found or data is missing.</Alert>
         <Button variant="contained" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
             Back to Dashboard
@@ -120,12 +149,21 @@ function EditVehicle() {
   }
 
   return (
-    <Container component={Paper} elevation={3} sx={{ p: 4, mt: 4 }}>
+    <Container
+      component={Paper}
+      elevation={3}
+      maxWidth="sm"
+      sx={{
+        p: 4,
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       <VehicleForm
-        initialValues={initialValues} // Pass the fetched data
+        initialValues={initialValues}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
-        error={error} // Pass fetch/submission error to the form
+        error={error}
       />
     </Container>
   );

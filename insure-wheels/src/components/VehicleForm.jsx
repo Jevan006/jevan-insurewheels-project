@@ -1,59 +1,33 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import {
-  TextField,
-  Button,
-  Box,
-  Typography,
-  CircularProgress,
-  Alert,
-  MenuItem // For select dropdown (e.g., color)
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab'; // For buttons with loading state
-import { Link } from 'react-router-dom';
+import { TextField, Button, Box, Typography, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-// Install @mui/lab if you haven't already: npm install @mui/lab
-// (This was not in the initial MUI install list, but useful for LoadingButton)
+const VehicleForm = ({ initialValues, onSubmit, isSubmitting, error }) => {
+  const navigate = useNavigate();
 
-// Define the validation schema using Yup
-const VehicleSchema = Yup.object().shape({
-  make: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Make is required'),
-  model: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Model is required'),
-  year: Yup.number()
-    .min(1900, 'Year must be after 1900')
-    .max(new Date().getFullYear() + 1, `Year cannot be in the future (max ${new Date().getFullYear() + 1})`) // Allow current year + 1
-    .required('Year is required')
-    .typeError('Year must be a number'),
-  vin: Yup.string()
-    .matches(/^[A-HJ-NPR-Z0-9]{17}$/i, 'VIN must be 17 alphanumeric characters (excluding I, O, Q)') // Standard VIN pattern
-    .required('VIN is required'),
-  color: Yup.string()
-    .min(2, 'Too Short!')
-    .max(30, 'Too Long!')
-    .required('Color is required'),
-  mileage: Yup.number()
-    .min(0, 'Mileage cannot be negative')
-    .required('Mileage is required')
-    .typeError('Mileage must be a number'),
-});
+  const validationSchema = Yup.object({
+    make: Yup.string().required('Make is required'),
+    model: Yup.string().required('Model is required'),
+    year: Yup.number()
+      .typeError('Year must be a number')
+      .required('Year is required')
+      .min(1900, 'Year must be after 1900')
+      .max(new Date().getFullYear() + 1, 'Year cannot be in the future'),
+    vin: Yup.string()
+      .required('VIN is required')
+      .matches(/^[A-HJ-NPR-Z0-9]{17}$/, 'VIN must be 17 alphanumeric characters (excluding I, O, Q)'),
+    color: Yup.string().required('Color is required'),
+    mileage: Yup.number()
+      .typeError('Mileage must be a number')
+      .required('Mileage is required')
+      .min(0, 'Mileage cannot be negative'),
+  });
 
-// Dummy list of common car colors (you can expand this)
-const colors = [
-  'Red', 'Blue', 'Black', 'White', 'Silver', 'Gray', 'Green', 'Yellow', 'Orange', 'Brown', 'Purple'
-];
-
-
-function VehicleForm({ initialValues, onSubmit, isSubmitting, error }) {
   return (
-    <Box sx={{ mt: 4, mb: 2, mx: 'auto', p: 3, maxWidth: 600, boxShadow: 3, borderRadius: 2 }}>
-      <Typography variant="h5" component="h2" gutterBottom align="center">
+    <Box>
+      <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
         {initialValues.id ? 'Edit Vehicle' : 'Add New Vehicle'}
       </Typography>
 
@@ -61,11 +35,11 @@ function VehicleForm({ initialValues, onSubmit, isSubmitting, error }) {
 
       <Formik
         initialValues={initialValues}
-        validationSchema={VehicleSchema}
+        validationSchema={validationSchema}
         onSubmit={onSubmit}
-        enableReinitialize={true} // Important for edit mode to update form when initialValues change
+        enableReinitialize={true} // Important for EditVehicle to load new initialValues
       >
-        {({ errors, touched, values }) => (
+        {({ errors, touched, isValid, dirty }) => (
           <Form>
             <Field
               as={TextField}
@@ -108,18 +82,11 @@ function VehicleForm({ initialValues, onSubmit, isSubmitting, error }) {
               as={TextField}
               name="color"
               label="Color"
-              select // Makes it a select dropdown
               fullWidth
               margin="normal"
               error={touched.color && !!errors.color}
               helperText={touched.color && errors.color}
-            >
-              {colors.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </Field>
+            />
             <Field
               as={TextField}
               name="mileage"
@@ -131,30 +98,29 @@ function VehicleForm({ initialValues, onSubmit, isSubmitting, error }) {
               helperText={touched.mileage && errors.mileage}
             />
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 variant="outlined"
                 color="secondary"
-                component={Link}
-                to="/dashboard"
+                onClick={() => navigate('/dashboard')}
+                disabled={isSubmitting}
               >
                 Cancel
               </Button>
-              <LoadingButton
+              <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                loading={isSubmitting} // Show loading spinner
-                loadingIndicator={<CircularProgress size={20} />}
+                disabled={isSubmitting || !isValid || !dirty} // Disable if submitting, invalid, or no changes
               >
-                {initialValues.id ? 'Save Changes' : 'Add Vehicle'}
-              </LoadingButton>
+                {isSubmitting ? 'Saving...' : (initialValues.id ? 'Update Vehicle' : 'Add Vehicle')}
+              </Button>
             </Box>
           </Form>
         )}
       </Formik>
     </Box>
   );
-}
+};
 
 export default VehicleForm;
