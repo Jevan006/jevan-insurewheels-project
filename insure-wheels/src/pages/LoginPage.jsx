@@ -1,9 +1,7 @@
-// src/pages/LoginPage.jsx
 
 import React from 'react';
 import { Container, Typography, TextField, Button, Box, Paper } from '@mui/material';
-import { useFormik } from 'formik'; // Import useFormik
-import * as Yup from 'yup'; // Import Yup
+import { useFormik } from 'formik';
 import { useAuth } from '../context/AuthContext';
 import { useSnackbar } from '../context/SnackbarContext';
 
@@ -11,11 +9,9 @@ function LoginPage() {
   const { login } = useAuth();
   const { showSnackbar } = useSnackbar();
 
-  // Define your password regex validation schema
   // Requires at least 8 characters, one uppercase, one lowercase, one number, and one special character.
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  // Define the validation schema using Yup
   const validationSchema = Yup.object({
     username: Yup.string()
       .required('Username is required'),
@@ -28,15 +24,14 @@ function LoginPage() {
       ),
   });
 
-  // Initialize Formik
+  // Initialising  Formik
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
-    validationSchema: validationSchema, // Apply the validation schema
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
-      // Call the login function from AuthContext with validated values
       const success = await login(values.username, values.password);
 
       if (success) {
@@ -77,7 +72,7 @@ function LoginPage() {
           autoFocus
           value={formik.values.username}
           onChange={formik.handleChange}
-          onBlur={formik.handleBlur} // Add onBlur for validation to trigger on field exit
+          onBlur={formik.handleBlur}
           error={formik.touched.username && Boolean(formik.errors.username)}
           helperText={formik.touched.username && formik.errors.username}
           sx={{ mb: 2 }}
@@ -93,7 +88,7 @@ function LoginPage() {
           autoComplete="current-password"
           value={formik.values.password}
           onChange={formik.handleChange}
-          onBlur={formik.handleBlur} // Add onBlur for validation to trigger on field exit
+          onBlur={formik.handleBlur}
           error={formik.touched.password && Boolean(formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
           sx={{ mb: 2 }}
@@ -109,7 +104,7 @@ function LoginPage() {
             borderRadius: '8px', // Added rounded corners for button
             fontSize: '1.1rem',
             fontWeight: 'bold',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.2)', // Added subtle shadow
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
             '&:hover': {
               backgroundColor: 'primary.dark',
               boxShadow: '0 6px 12px rgba(0,0,0,0.3)',
