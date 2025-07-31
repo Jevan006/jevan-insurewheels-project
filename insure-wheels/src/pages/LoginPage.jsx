@@ -20,14 +20,14 @@ function LoginPage() {
       elevation={6}
       sx={{
         p: 4,
-        maxWidth: '350px', // Makes the entire white container smaller
-        width: '100%',      // Ensures responsiveness up to maxWidth
+        maxWidth: '350px',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', // Centers content (Typography, Box form) horizontally within the container
+        alignItems: 'center',
         boxShadow: 3,
-        borderRadius: '12px', // Rounded corners for the container
-        mx: 'auto',          // Centers the container horizontally on the page
+        borderRadius: '12px',
+        mx: 'auto',
       }}
     >
       <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 'bold', color: 'primary.main' }}>
@@ -39,17 +39,17 @@ function LoginPage() {
         sx={{
           mt: 1,
           width: '100%',
-          maxWidth: '300px', // Limits the width of the form elements (TextFields, Button)
-          mx: 'auto',        // Centers the form elements horizontally within the container
-          display: 'flex',   // Use flexbox for vertical alignment of form elements
+          maxWidth: '300px',
+          mx: 'auto',
+          display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center', // Centers the TextField and Button if they are smaller than maxWidth
+          alignItems: 'center',
         }}
       >
         <TextField
           margin="normal"
           required
-          fullWidth // Makes TextField take 100% of its parent Box's maxWidth (300px)
+          fullWidth
           id="username"
           label="Username"
           name="username"
@@ -57,12 +57,12 @@ function LoginPage() {
           autoFocus
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          // Removed maxWidth and width from here, as fullWidth combined with parent Box's maxWidth handles it
+
         />
         <TextField
           margin="normal"
           required
-          fullWidth // Makes TextField take 100% of its parent Box's maxWidth (300px)
+          fullWidth
           name="password"
           label="Password"
           type="password"
@@ -73,7 +73,7 @@ function LoginPage() {
         />
         <Button
           type="submit"
-          fullWidth // Makes Button take 100% of its parent Box's maxWidth (300px)
+          fullWidth
           variant="contained"
           sx={{
             mt: 3,
@@ -82,7 +82,7 @@ function LoginPage() {
             borderRadius: '8px', // Rounded corners for button
             fontSize: '1.1rem',
             fontWeight: 'bold',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.2)', // Subtle shadow
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)', // reminder to change this if it does not look nice
             '&:hover': {
               backgroundColor: 'primary.dark',
               boxShadow: '0 6px 12px rgba(0,0,0,0.3)',

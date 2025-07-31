@@ -1,5 +1,3 @@
-// src/App.jsx
-
 import React from 'react';
 import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
@@ -29,9 +27,8 @@ function App() {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const appBarHeight = isXs ? '56px' : '64px'; // Default AppBar height for mobile vs desktop
-  const location = useLocation(); // Get current location for conditional styling
+  const location = useLocation();
 
-  // RESTORED: Your original Pexels background image URL
   const backgroundImage = 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
 
@@ -94,14 +91,12 @@ function App() {
           flexGrow: 1,
           zIndex: 2,
           position: 'relative',
-          // Apply padding top only if not on the login page, to account for AppBar
           paddingTop: (location.pathname !== '/login') ? appBarHeight : 0,
           paddingBottom: theme.spacing(4),
           px: theme.spacing(2),
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          // Center content vertically if on login page, otherwise align to start
           justifyContent: (location.pathname === '/login') ? 'center' : 'flex-start',
           width: '100%',
         }}
@@ -109,7 +104,6 @@ function App() {
         <Routes>
           {/* The root path "/" now directly renders the LoginPage */}
           <Route path="/" element={<LoginPage />} />
-          {/* Explicit login page route (can also be accessed via /) */}
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected routes */}
