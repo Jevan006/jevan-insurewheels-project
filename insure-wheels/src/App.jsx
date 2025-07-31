@@ -1,12 +1,13 @@
+// src/App.jsx
 
 import React from 'react';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useAuth } from './context/AuthContext';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-//page components
+// Page components
 import Dashboard from './pages/Dashboard';
 import NewVehicle from './pages/NewVehicle';
 import EditVehicle from './pages/EditVehicle';
@@ -14,6 +15,7 @@ import Quotes from './pages/Quotes';
 import ConfirmQuote from './pages/ConfirmQuote';
 import LoginPage from './pages/LoginPage';
 
+// ProtectedRoute component to guard routes
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
   if (!isLoggedIn) {
@@ -27,15 +29,18 @@ function App() {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const appBarHeight = isXs ? '56px' : '64px'; // Default AppBar height for mobile vs desktop
+  const location = useLocation(); // Get current location for conditional styling
 
+  // RESTORED: Your original Pexels background image URL
   const backgroundImage = 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh', // background
+        minHeight: '100vh',
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -54,74 +59,68 @@ function App() {
         },
       }}
     >
-      {/* AppBar (Navigation Bar) */}
-      {isLoggedIn && (
-        <>
-          <AppBar position="static" sx={{ zIndex: 2 }}>
-            <Toolbar>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  InsureWheels
-                </Link>
-              </Typography>
+      {/* AppBar (Navigation Bar) - Always visible */}
+      <AppBar position="static" sx={{ zIndex: 2 }}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {/* Link to dashboard if logged in, otherwise to login page */}
+            {isLoggedIn ? (
+              <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                InsureWheels
+              </Link>
+            ) : (
+              <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+                InsureWheels
+              </Link>
+            )}
+          </Typography>
+          {/* Navigation buttons based on login status */}
+          {!isLoggedIn ? (
+            // If not logged in, 'Login' button is the primary navigation
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+          ) : (
+            <>
               <Button color="inherit" component={Link} to="/dashboard">Dashboard</Button>
               <Button color="inherit" component={Link} to="/vehicles/new">Add Vehicle</Button>
               <Button color="inherit" onClick={logout}>Logout</Button>
-            </Toolbar>
-          </AppBar>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
 
-          {/* "InsureWheels" Text Heading */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 1,
-              textAlign: 'center',
-              pointerEvents: 'none',
-              maxWidth: '90%',
-              display: { xs: 'none', sm: 'block' },
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{
-                color: 'white',
-                textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
-                fontWeight: 'bold',
-                fontSize: { xs: '2.5rem', sm: '3.5rem', md: '5rem' },
-              }}
-            >
-              InsureWheels
-            </Typography>
-          </Box>
-        </>
-      )}
-
+      {/* Main content area */}
       <Box
         sx={{
           flexGrow: 1,
           zIndex: 2,
           position: 'relative',
-          paddingTop: isLoggedIn ? appBarHeight : 0,
-          paddingBottom: isLoggedIn ? theme.spacing(4) : 0,
+          // Apply padding top only if not on the login page, to account for AppBar
+          paddingTop: (location.pathname !== '/login') ? appBarHeight : 0,
+          paddingBottom: theme.spacing(4),
           px: theme.spacing(2),
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: isLoggedIn ? 'flex-start' : 'center',
+          // Center content vertically if on login page, otherwise align to start
+          justifyContent: (location.pathname === '/login') ? 'center' : 'flex-start',
           width: '100%',
         }}
       >
         <Routes>
+          {/* The root path "/" now directly renders the LoginPage */}
+          <Route path="/" element={<LoginPage />} />
+          {/* Explicit login page route (can also be accessed via /) */}
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/vehicles/new" element={<ProtectedRoute><NewVehicle /></ProtectedRoute>} />
           <Route path="/vehicles/:id/edit" element={<ProtectedRoute><EditVehicle /></ProtectedRoute>} />
           <Route path="/quotes/:vehicleId" element={<ProtectedRoute><Quotes /></ProtectedRoute>} />
           <Route path="/confirm" element={<ProtectedRoute><ConfirmQuote /></ProtectedRoute>} />
-          <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
+
+          {/* Fallback for unmatched routes - redirect to login if not logged in, else dashboard */}
+          <Route path="*" element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} replace />} />
         </Routes>
       </Box>
     </Box>
